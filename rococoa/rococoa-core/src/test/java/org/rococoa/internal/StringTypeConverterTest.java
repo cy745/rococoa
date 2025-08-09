@@ -59,13 +59,13 @@ public class StringTypeConverterTest extends RococoaTestCase {
         ID helloID = Foundation.cfString("Hello"); // just leaks
 
         // We can cope with 64 bits on 64 and 32
-        Number nativeValue = new Long(helloID.longValue());
+        Number nativeValue = helloID.longValue();
         String converted = converter.fromNative(nativeValue, null);
         assertEquals("Hello", converted);
 
         // We must cope with 32 bits on 32-bit
         if (NativeLong.SIZE == 4) {
-            nativeValue = new Integer(helloID.intValue());
+            nativeValue = helloID.intValue();
             converted = converter.fromNative(nativeValue, null);
             assertEquals("Hello", converted);
         }
@@ -73,7 +73,7 @@ public class StringTypeConverterTest extends RococoaTestCase {
 
     @Test
     public void convertsReturnedNilToNull() {
-        Number nativeValue = new Long(0);
+        Number nativeValue = 0L;
         assertNull(converter.fromNative(nativeValue, null));
     }
 

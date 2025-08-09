@@ -103,6 +103,7 @@ public class ObjCObjectInvocationHandler implements InvocationHandler {
         return annotation.value();
     }
 
+    @SuppressWarnings("removal")
     @Override
     protected void finalize() throws Throwable {
         if (finalized || !releaseOnFinalize) {

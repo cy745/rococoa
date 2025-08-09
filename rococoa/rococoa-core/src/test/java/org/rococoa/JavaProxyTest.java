@@ -21,7 +21,6 @@ package org.rococoa;
 
 import com.sun.jna.NativeLong;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.rococoa.cocoa.foundation.*;
 import org.rococoa.test.RococoaTestCase;
@@ -114,9 +113,9 @@ public class JavaProxyTest extends RococoaTestCase {
     public void testRepondsToSelector() {
         // respond to selector is required for delegates
         assertEquals(0, (byte) Foundation.send(proxy.id(), "respondsToSelector:",
-                byte.class, new Selector[]{Foundation.selector("Bo")}));
+                byte.class, (Object[]) new Selector[]{Foundation.selector("Bo")}));
         assertEquals(1, (byte) Foundation.send(proxy.id(), "respondsToSelector:",
-                byte.class, new Selector[]{Foundation.selector("sayHello")}));
+                byte.class, (Object[]) new Selector[]{Foundation.selector("sayHello")}));
     }
 
     @Test
@@ -180,14 +179,14 @@ public class JavaProxyTest extends RococoaTestCase {
     @Test
     public void testTakesJavaStringReturnsJavaString() {
         assertEquals("lower", Foundation.send(proxy.id(), "takesJavaStringReturnsJavaString:",
-                String.class, new String[]{"LoWeR"}));
+                String.class, (Object[]) new String[]{"LoWeR"}));
     }
 
     @Test
     public void testSendAndReceiveStructByReference() {
         TestStruct struct = new TestStruct(42, Math.PI);
         TestStruct result = Foundation.send(proxy.id(), "takesStructureReturnsStructure:",
-                TestStruct.class, new TestStruct[]{struct});
+                TestStruct.class, (Object[]) new TestStruct[]{struct});
         assertEquals("passing to java", 42, ((TestStruct) implementor.arg).anInt);
         assertEquals("passing to java", Math.PI, ((TestStruct) implementor.arg).aDouble, 0.00001);
         assertEquals("returning to OC", 42, result.anInt);
@@ -199,7 +198,7 @@ public class JavaProxyTest extends RococoaTestCase {
         // Hmmm, difficult to prove this is passed by value
         TestStruct.ByValue struct = new TestStruct.ByValue(42, Math.PI);
         TestStruct result = Foundation.send(proxy.id(), "takesStructureByValueReturnsStructureByValue:",
-                TestStruct.ByValue.class, new TestStruct.ByValue[]{struct});
+                TestStruct.ByValue.class, (Object[]) new TestStruct.ByValue[]{struct});
         assertEquals("passing to java", 42, ((TestStruct) implementor.arg).anInt);
         assertEquals("passing to java", Math.PI, ((TestStruct) implementor.arg).aDouble, 0.00001);
         assertEquals("returning to OC", 42, result.anInt);
@@ -209,29 +208,29 @@ public class JavaProxyTest extends RococoaTestCase {
     @Test
     public void testSendAndReceiveNativeLong() {
         NativeLong result = Foundation.send(proxy.id(), "takesNativeLongReturnsNativeLong:",
-                NativeLong.class, new NativeLong[]{new NativeLong(42)});
+                NativeLong.class, (Object[]) new NativeLong[]{new NativeLong(42)});
         assertEquals(42, result.longValue());
     }
 
     @Test
     public void testSendAndReceiveLong() {
         long result = Foundation.send(proxy.id(), "takesLongReturnsLong:",
-                long.class, new Integer[]{42});
+                long.class, (Object[]) new Integer[]{42});
         assertEquals(42, result);
 
         result = Foundation.send(proxy.id(), "takesLongReturnsLong:",
-                long.class, new Long[]{Long.MAX_VALUE});
+                long.class, (Object[]) new Long[]{Long.MAX_VALUE});
         assertEquals(Long.MAX_VALUE, result);
     }
 
     @Test
     public void testSendAndReceiveDouble() {
         double result = Foundation.send(proxy.id(), "takesDoubleReturnsDouble:",
-                double.class, new Double[]{Math.PI});
+                double.class, (Object[]) new Double[]{Math.PI});
         assertEquals(Double.doubleToLongBits(Math.PI), Double.doubleToLongBits(result));
 
         result = Foundation.send(proxy.id(), "takesDoubleReturnsDouble:",
-                double.class, new Double[]{Double.MAX_VALUE});
+                double.class, (Object[]) new Double[]{Double.MAX_VALUE});
         assertEquals(Double.doubleToLongBits(Double.MAX_VALUE), Double.doubleToLongBits(result));
     }
 

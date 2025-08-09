@@ -42,6 +42,9 @@ import static org.junit.Assert.assertNotNull;
  */
 public abstract class RococoaTestCase {
     static {
+        String projectPath = System.getProperty("user.dir");
+        String dylibPath = projectPath + "/../librococoa/build/Release";
+        System.setProperty("jna.library.path", dylibPath);
         Native.load("rococoa-test", RococoaLibrary.class);
     }
 
@@ -102,6 +105,7 @@ public abstract class RococoaTestCase {
         //assertEquals(expected, Foundation.cfGetRetainCount(id).intValue());
     }
 
+    @SuppressWarnings("removal")
     public static void gc() {
         System.gc();
         System.gc();
