@@ -26,13 +26,16 @@ import org.rococoa.cocoa.CFIndex;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Listens to invocations of methods on a Java NSObject, and forwards them to
@@ -293,10 +296,28 @@ public class ObjCObjectInvocationHandler implements InvocationHandler {
     }
 
     private String selectorNameFor(Method method) {
+        if (method.getParameterCount() > 1) {
+            // 判断该函数是否有参数被标记为NamedArg
+            boolean hasNamedArg = Arrays.stream(method.getParameters())
+                    .anyMatch(p -> p.isAnnotationPresent(NamedArg.class));
+
+            if (hasNamedArg) {
+                Stream<String> parameterNames = Arrays.stream(method.getParameters())
+                        .skip(1)
+                        .map(ObjCObjectInvocationHandler::getParameterNamesFromNamedArg);
+
+                String selectorComponent = parameterNames
+                        .map(p -> p + ":")
+                        .collect(Collectors.joining());
+
+                return method.getName() + ":" + selectorComponent;
+            }
+        }
+
         StringBuilder selector = new StringBuilder(method.getName());
-        if (selector.charAt(selector.length()-1) == '_') {
+        if (selector.charAt(selector.length() - 1) == '_') {
             // lets us append _ to allow Java keywords as method names
-            selector.setLength(selector.length()-1);
+            selector.setLength(selector.length() - 1);
         }
         if (method.getParameterTypes().length > 0) {
             for (int i = 0; i < selector.length(); i++) {
@@ -309,6 +330,11 @@ public class ObjCObjectInvocationHandler implements InvocationHandler {
         return selector.toString();
     }
 
+    private static String getParameterNamesFromNamedArg(Parameter p) {
+        return Optional.ofNullable(p.getAnnotation(NamedArg.class))
+                .map(NamedArg::value)
+                .orElse("");
+    }
 
     private boolean shouldInvokeMethodsOnMainThread(AnnotatedElement element) {
         return element != null && element.getAnnotation(RunOnMainThread.class) != null;
