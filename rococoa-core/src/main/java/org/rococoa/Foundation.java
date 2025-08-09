@@ -105,6 +105,12 @@ public abstract class Foundation {
         if (logging.isLoggable(Level.FINEST)) {
             logging.finest(String.format("calling cfRetain(%s)", id));
         }
+        if (id.isNull()) {
+            if (logging.isLoggable(Level.INFO)) {
+                logging.info(String.format("calling cfRetain(%s) is Null", id));
+            }
+            return id;
+        }
         return foundationLibrary.CFRetain(id);
     }
 
@@ -114,6 +120,12 @@ public abstract class Foundation {
     public static void cfRelease(ID id) {
         if (logging.isLoggable(Level.FINEST)) {
             logging.finest(String.format("calling cfRelease(%s)", id));
+        }
+        if (id.isNull()) {
+            if (logging.isLoggable(Level.INFO)) {
+                logging.info(String.format("calling cfRelease(%s) is Null", id));
+            }
+            return;
         }
         foundationLibrary.CFRelease(id);
     }
