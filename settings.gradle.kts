@@ -15,4 +15,7 @@ dependencyResolutionManagement {
 include(":rococoa-core")
 include(":rococoa-cocoa")
 include(":rococoa-contrib")
-include(":librococoa")
+
+if (System.getenv("JITPACK") != "true") {
+    include(":librococoa")
+}

@@ -17,15 +17,17 @@ dependencies {
 }
 
 tasks.test {
-    val libraryPath = File(rootProject.projectDir, "librococoa/build/Releases").absolutePath
+    val libraryPath = File(rootProject.projectDir, "librococoa/libs").absolutePath
     jvmArgs("-Djava.library.path=$libraryPath")
     systemProperty("jna.library.path", libraryPath)
     environment("DYLD_FALLBACK_FRAMEWORK_PATH", libraryPath)
 }
 
-// 在开始编译前将，确保librococoa已经编译完成
-tasks.getByName("compileJava") {
-    dependsOn(":librococoa:build")
+if (System.getenv("JITPACK") != "true") {
+    // 在开始编译前将，确保librococoa已经编译完成
+    tasks.getByName("compileJava") {
+        dependsOn(":librococoa:build")
+    }
 }
 
 mavenPublishing {

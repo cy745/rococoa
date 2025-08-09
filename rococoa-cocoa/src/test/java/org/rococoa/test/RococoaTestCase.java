@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNotNull;
 public abstract class RococoaTestCase {
     static {
         String projectPath = System.getProperty("user.dir");
-        String dylibPath = projectPath + "/../librococoa/build/Release";
+        String dylibPath = projectPath + "/../librococoa/libs";
         System.setProperty("jna.library.path", dylibPath);
         Native.load("rococoa-test", RococoaLibrary.class);
     }
