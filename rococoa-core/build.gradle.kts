@@ -16,19 +16,17 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-//tasks.test {
-//    jvmArgs("-Djava.library.path=build/libs")
-//    systemProperty("jna.library.path", "../build/Release")
-//    environment("DYLD_FALLBACK_FRAMEWORK_PATH", "../build/Release")
-//
-//    // Configure fork behavior
-//    forkCount = 1
-//    reuseForks = false
-//}
-//
-//tasks.getByName("compileJava") {
-//    dependsOn(":librococoa:copyDylibTest")
-//}
+tasks.test {
+    val libraryPath = File(rootProject.projectDir, "librococoa/build/Releases").absolutePath
+    jvmArgs("-Djava.library.path=$libraryPath")
+    systemProperty("jna.library.path", libraryPath)
+    environment("DYLD_FALLBACK_FRAMEWORK_PATH", libraryPath)
+}
+
+// 在开始编译前将，确保librococoa已经编译完成
+tasks.getByName("compileJava") {
+    dependsOn(":librococoa:build")
+}
 
 mavenPublishing {
     coordinates(group.toString(), "core", version.toString())
