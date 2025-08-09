@@ -2,8 +2,8 @@ plugins {
     `java-library`
 }
 
-group = "org.rococoa"
-version = "0.10.1-SNAPSHOT"
+group = "com.lalilu.rococoa"
+version = "0.10.1"
 
 // Task to build all native libraries first
 tasks.register("buildNativeLibs") {
