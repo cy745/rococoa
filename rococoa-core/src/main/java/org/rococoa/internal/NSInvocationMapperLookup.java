@@ -60,7 +60,7 @@ public final class NSInvocationMapperLookup {
 
         // 如果一个类可赋值Void，则认为该类就是Void
         if (directMatch == null && type.isAssignableFrom(Void.class)) {
-            directMatch = classToMapperLookup.get(Void.class);
+            directMatch = classToMapperLookup.get(void.class);
         }
 
         if (directMatch != null) {
