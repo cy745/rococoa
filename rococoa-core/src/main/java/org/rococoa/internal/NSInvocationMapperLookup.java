@@ -57,6 +57,12 @@ public final class NSInvocationMapperLookup {
     public static NSInvocationMapper mapperForType(Class<?> type) {
         // first check if we have a direct hit in the classToMapperLookup
         NSInvocationMapper directMatch = classToMapperLookup.get(type);
+
+        // 如果一个类可赋值Void，则认为该类就是Void
+        if (directMatch == null && type.isAssignableFrom(Void.class)) {
+            directMatch = classToMapperLookup.get(Void.class);
+        }
+
         if (directMatch != null) {
             return directMatch;
         }
