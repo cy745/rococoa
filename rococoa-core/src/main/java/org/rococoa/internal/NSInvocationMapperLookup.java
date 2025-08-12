@@ -33,8 +33,6 @@ import org.rococoa.cocoa.foundation.NSUInteger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Look up how to map from and from NSInvocation and Java objects.
@@ -42,7 +40,6 @@ import java.util.logging.Logger;
  * @author duncan
  */
 public final class NSInvocationMapperLookup {
-    private static final Logger logging = Logger.getLogger("org.rococoa.mapper.lookup");
     private static final int NATIVE_POINTER_SIZE = Native.POINTER_SIZE;
     private static final int NATIVE_LONG_SIZE = Native.LONG_SIZE;
 
@@ -86,28 +83,6 @@ public final class NSInvocationMapperLookup {
     }
 
     static {
-        try {
-            Class<?> unitClazz = Class.forName("kotlin.Unit");
-            addToLookup(new NSInvocationMapper("unit", unitClazz) {
-                @Override
-                public Object readFrom(Memory buffer, Class<?> type) {
-                    throw new IllegalStateException("Should not have to read void");
-                }
-
-                @Override
-                public Memory bufferForResult(Object methodCallResult) {
-                    return new Memory(0);
-                }
-            });
-            if (logging.isLoggable(Level.INFO)) {
-                logging.finest("Kotlin Unit found");
-            }
-        } catch (ClassNotFoundException e) {
-            if (logging.isLoggable(Level.INFO)) {
-                logging.finest(String.format("Kotlin Unit not found: %s", e.getMessage()));
-            }
-        }
-
         addToLookup(new NSInvocationMapper("v", void.class) {
             @Override
             public Object readFrom(Memory buffer, Class<?> type) {

@@ -52,6 +52,7 @@ import com.sun.jna.Memory;
 public class OCInvocationCallbacks {
 
     private static final Logger logging = Logger.getLogger("org.rococoa.callback");
+    private static Class<?> kotlinUnitClass = null;
 
     private final Object javaObject;
 
@@ -85,6 +86,13 @@ public class OCInvocationCallbacks {
 
     public OCInvocationCallbacks(Object javaObject) {
         this.javaObject = javaObject;
+        if (kotlinUnitClass == null) {
+            try {
+                kotlinUnitClass = Class.forName("kotlin.Unit");
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+        }
     }
 
     protected String methodSignatureForSelector(String selectorName) {
@@ -155,10 +163,12 @@ public class OCInvocationCallbacks {
                         "Number of arguments mismatch for invocation  of selector %s (%s arguments supplied), method %s expects %s",
                         selectorName, nsMethodSignature.numberOfArguments(), method.getName(), method.getParameterTypes().length));
             }
-            if (typeToReturnToObjC.equals("v") && method.getReturnType() != void.class) {
-                throw new NoSuchMethodException(String.format(
-                        "Selector %s expects void return, but method %s returns %s",
-                        selectorName, method.getName(), method.getReturnType()));
+            if (typeToReturnToObjC.equals("v")) {
+                if (!(method.getReturnType() == void.class || method.getReturnType() == kotlinUnitClass)){
+                    throw new NoSuchMethodException(String.format(
+                            "Selector %s expects void return, but method %s returns %s",
+                            selectorName, method.getName(), method.getReturnType()));
+                }
             }
             if (method.getReturnType() == void.class && !(typeToReturnToObjC.equals("v"))) {
                 throw new NoSuchMethodException(String.format(
