@@ -51,14 +51,15 @@ public final class NSInvocationMapperLookup {
     private static final Map<Class<?>, NSInvocationMapper> classToMapperLookup = new HashMap<Class<?>, NSInvocationMapper>();
     private static Class<?> kotlinUnitClass = null;
 
-    private NSInvocationMapperLookup() {
-        if (kotlinUnitClass == null) {
-            try {
-                kotlinUnitClass = Class.forName("kotlin.Unit");
-            } catch (ClassNotFoundException e) {
-                // ignore
-            }
+    static {
+        try {
+            kotlinUnitClass = Class.forName("kotlin.Unit");
+        } catch (ClassNotFoundException e) {
+            // ignore
         }
+    }
+
+    private NSInvocationMapperLookup() {
     }
 
     public static NSInvocationMapper mapperForType(Class<?> type) {
