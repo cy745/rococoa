@@ -49,14 +49,25 @@ public final class NSInvocationMapperLookup {
     private static final String CGFLOAT_ENCODING = NATIVE_LONG_SIZE == 4 ? "f" : "d";
 
     private static final Map<Class<?>, NSInvocationMapper> classToMapperLookup = new HashMap<Class<?>, NSInvocationMapper>();
+    private static Class<?> kotlinUnitClass = null;
 
     private NSInvocationMapperLookup() {
-        //
+        if (kotlinUnitClass == null) {
+            try {
+                kotlinUnitClass = Class.forName("kotlin.Unit");
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+        }
     }
 
     public static NSInvocationMapper mapperForType(Class<?> type) {
         // first check if we have a direct hit in the classToMapperLookup
         NSInvocationMapper directMatch = classToMapperLookup.get(type);
+        if (directMatch == null && kotlinUnitClass != null && type.isAssignableFrom(kotlinUnitClass)) {
+            directMatch = classToMapperLookup.get(void.class);
+        }
+
         if (directMatch != null) {
             return directMatch;
         }
