@@ -164,7 +164,7 @@ public class OCInvocationCallbacks {
                         selectorName, nsMethodSignature.numberOfArguments(), method.getName(), method.getParameterTypes().length));
             }
             if (typeToReturnToObjC.equals("v")) {
-                if (!(method.getReturnType() == void.class || method.getReturnType() == kotlinUnitClass)){
+                if (!(method.getReturnType() == void.class || method.getReturnType().isAssignableFrom(kotlinUnitClass))){
                     throw new NoSuchMethodException(String.format(
                             "Selector %s expects void return, but method %s returns %s",
                             selectorName, method.getName(), method.getReturnType()));
